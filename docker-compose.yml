@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mi-app:latest
+    container_name: mi-app-container
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://postgres:root@db:5432/prueba-c
+      TOKEN_SECRET: eb9570f37711833e5eabc345b2c7d391acad7c6ef40ce157c36625b0e2e137bbf3914beb94fa0252e567413f48a31363ba6a0c823effc13bbf7e0b59b95b82c3
+    depends_on:
+      - db
+    command: ["nodemon", "src/server"]
+    networks:
+      - app-network
+
+  db:
+    image: postgres:13
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: prueba-c
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
